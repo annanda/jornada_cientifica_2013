@@ -8,3 +8,12 @@ def mdc(a,b):
         b = r1
         r1 = r2
     return b
+
+def fatoracao_trivial_completa(n):
+    "Para fatorar o numero pelo algoritmo de fatoracao trivial completo"
+    pass
+
+def fermat(n):
+    "Para fatorar o numero pelo algoritmo de fermat"
+    pass
+
