@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import math
 
 def mdc(a,b):
     "Para calcular o mdc entre dois números a e b"
@@ -15,5 +16,19 @@ def fatoracao_trivial_completa(n):
 
 def fermat(n):
     "Para fatorar o numero pelo algoritmo de fermat"
-    pass
+    y = 0
+    while n % 2 is 0:
+        n = n/2
+    if n is 1:
+        return [1,1]
+    x = (int)(math.sqrt(n))
 
+    while n is not (x**2) - (y**2):
+        x = x+1
+
+        y = (int)(math.sqrt(x**2 - n))
+
+        if x is (n+1 / 2):
+            return [1,n]
+
+    return [x+y, x-y]

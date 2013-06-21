@@ -1,0 +1,404 @@
+Divide(a : NNI, b : PI) : Record(q : NNI, r : NNI) ==
+  Q : NNI := 0
+  R : NNI := a
+  while (R >= b) repeat
+    Q := Q + 1
+    R := R - b
+  return [Q,R]
+
+Mdc(a : PI, b : PI) : PI ==
+  R1 : NNI
+  R2 : NNI
+  R1 := a rem b
+  while (R1 ~= 0) repeat
+    R2 := b rem R1
+    b := R1
+    R1 := R2
+  return b
+
+MdcEst(a: PI, b:PI): Record(alfa:INT , beta:INT, mdc:PI) ==
+  R1 : NNI
+  R1 := a rem b
+  Q  : NNI
+  X1 : INT := 1
+  X2 : INT := 0
+  Y1 : INT := 0
+  Y2 : INT := 1
+  XT : INT
+  YT : INT
+
+  while (R1 ~= 0) repeat
+    Q := a quo b
+    XT := X1 - Q * X2
+    YT := Y1 - Q * Y2
+    X1 := X2
+    X2 := XT
+    Y1 := Y2
+    Y2 := YT
+    a := b
+    b := R1
+    R1 := a rem b
+  return [X2,Y2,b]
+
+Diofan (a: PI, b: PI, c: PI): Record ( x: INT, y: INT) ==
+   R : Record(alfa:INT , beta:INT, mdc:PI) := MdcEst(a,b)
+   k : INT := c quo (R.mdc)
+   if( c rem (R.mdc) ~=0) then
+     return [0,0]
+   else
+     return [k * (R.alfa), k * (R.beta)]
+
+Fattriv (n:PI):  PI ==
+  F: PI := 2
+  while ((F <= n) and (n>1)) repeat
+    if (n rem F=0) then
+        return F
+    else
+        F:= F+1
+
+FatTrivComp(n:PI): Record(F:List(PI), M:List(PI)) ==
+  f: PI
+  expoente : NNI := 0
+  F: List(PI) := []
+  M: List(PI) := []
+
+  while (n>1) repeat
+    f:= Fattriv(n)
+    while (n rem f = 0)repeat
+      expoente:= expoente + 1
+      n:= n quo f
+    F:= concat(F, f)
+    M:= concat(M, expoente)
+    expoente := 0
+  return [ F, M]
+
+Fermat(n:PI):List(PI) ==
+    x : INT
+    y : INT := 0
+    while (n rem 2 = 0) repeat
+      n := n quo 2
+    if(n=1) then
+      return [1,1]
+    x := wholePart(sqrt(n)::FLOAT)
+    while (n ~= (x^2) - (y^2)) repeat
+      x := x+1
+      y := wholePart(sqrt(x^2 - n)::FLOAT)
+      if(x=((n+1) quo 2)) then
+        return [1,n]
+    return [(x+y),(x-y)]
+
+Crivo(n:PI):List(PI) ==
+    x : List(NNI) := []
+    y : PI := 3
+    z : PI := 1
+    aux: PI :=1
+    listaFinal : List(PI) := [2]
+
+    while (y <= n) repeat
+       x := concat (x,y)
+       y := y + 2
+    y:=x.z
+    while(y<=wholePart(sqrt(n)::FLOAT))repeat
+       z:= aux
+       while(z<=#x )repeat
+         z := z+y
+         if (z <= #x)then
+           x.z:= 0
+       y := y+2
+       aux:=aux+1
+    z := 1
+    while(z <= #x) repeat
+      if( x.z ~= 0) then
+        listaFinal:= concat (listaFinal,x.z)
+      z := z + 1
+    return listaFinal
+
+InvMod(a:NNI, n:PI):NNI==
+    aux:Record(alfa:INT , beta:INT, mdc:PI) := MdcEst(a,n)
+    if (aux.mdc=1) then
+        while(aux.alfa<0) repeat
+            aux.alfa:=aux.alfa+n
+        return aux.alfa
+    else
+        return 0
+
+
+ExpMod(a: NNI, e: NNI, n: PI) : NNI ==
+    r: NNI := 1
+    while(e ~= 0) repeat
+        if(e rem 2 = 1) then
+            r := (a * r) rem n
+        e := e quo 2
+        a := (a * a) rem n
+    return r
+
+CompFermat( b: PI, n: PI) : BOOLEAN ==
+    if(ExpMod(b,n-1,n)=1) then
+        return false
+    else
+        return true
+
+Carmichael(n:NNI):BOOLEAN ==
+    aux:Record(F:List(PI), M:List(PI)):=FatTrivComp(n)
+    i:NNI:=1
+    while(i<=#aux.F) repeat
+       if((n rem ((aux.F.i)*(aux.F.i)) = 0)or((n-1) rem ((aux.F.i)-1) ~= 0)) then
+        return false
+       i := i +1
+    return true
+
+Miller(n:PI,b:PI):BOOLEAN==
+  q:PI:=n-1
+  k:NNI:=0
+  while(q rem 2 = 0) repeat
+      q:=q quo 2
+      k:= k +1
+  f : NNI := ExpMod(b, q, n)
+  if ((f = 1) or (f = n-1) ) then
+      return false
+
+  while(k > 0) repeat
+      f := ExpMod(f, 2, n)
+      if( f = n-1)then
+         return false
+      else
+         k := k-1
+  return true
+
+MillerComp(n:PI): BOOLEAN==
+   b:PI:=2
+   teste:BOOLEAN
+   while (b < n-1) repeat
+      teste:= Miller(n,b)
+      if(teste = true) then
+         return true -- eh composto
+      b:= b + 1
+   return false -- eh primo
+
+
+Chines(ai:LIST(NNI),ni:LIST(PI)):NNI==
+    N:PI:=1
+    x:INT:=0
+    i:PI:=1
+    ei:INT
+
+    MDC:Record(alfa:INT , beta:INT, mdc:PI)
+    while(i<=#ni) repeat
+        N:= N*(ni.i)
+        i:= i + 1
+    i:=1
+    while(i<=#ai) repeat
+
+       MDC:=MdcEst(ni.i, N quo ni.i)
+       ei:=(MDC.beta)*(N quo ni.i)
+       x:=x+(ai.i)*(ei)
+       i:=i+1
+    while(x<0) repeat
+       x:=x+N
+
+    return x rem N
+
+Chines_Exp(a: NNI, e: NNI, n: PI) : NNI ==
+    resultado: Record(F:List(PI), M:List(PI))
+    resultado:=FatTrivComp(n)
+    i:INT:=1
+    lista1: List(PI):=[]
+    aux:INT
+    elemento:INT
+    retorno:NNI
+    while (i<=#resultado.M) repeat
+        if (resultado.M.i ~= 1) then
+            return 0
+        i := i +1
+    i:=1
+    while(i<=#resultado.F) repeat
+        if((a rem resultado.F.i) ~= 0) then
+            aux:= e rem (resultado.F.i -1)
+            elemento:= ExpMod(a, aux, resultado.F.i)
+            lista1:= concat(lista1,elemento)
+            i:= i +1
+        else
+            lista1:= concat(lista1,0)
+            i := i + 1
+    retorno := Chines(lista1,resultado.F)
+    return retorno
+
+UdeN(n : PI) : List(PI) ==
+  i : PI := 1
+  lista : List(PI) := []
+  while(i < n) repeat
+    if(Mdc(i, n) = 1) then
+      lista := concat(lista, i)
+    i := i + 1
+  return lista
+
+AchaK ( n : PI, a : PI ) : PI ==
+  i : PI := 1
+  elemento : NNI := ExpMod(a,i,n)
+  while(elemento ~= 1) repeat
+    i := i + 1
+    elemento := ExpMod(a,i,n)
+  return i
+
+Ordens (n : PI) : List(PI) ==
+  Lista : List(PI) := UdeN(n)
+  Resposta : List(PI) := []
+  i:PI:=1
+  k : PI
+  while(i <= #Lista) repeat
+    k:= AchaK(n,Lista.i)
+    i:= i+1
+    Resposta:= concat(Resposta, k)
+  return Resposta
+
+Phi(n: PI):PI ==
+  fat: Record(F:List(PI), M:List(PI)) := FatTrivComp(n)
+  phi:PI := 1
+  i : PI := 1
+  base : PI
+  expoente : NNI
+  while(i <= #fat.F) repeat
+    base := fat.F.i
+    expoente := (fat.M.i) - 1
+    phi := phi * (base**expoente) * (base - 1)
+    i := i + 1
+  return phi
+
+Ciclico(n: PI) : BOOLEAN ==
+  i : PI := 1
+  u : List(PI) := UdeN(n)
+  ordem : PI
+  while (i <= #u) repeat
+     ordem := AchaK(n, u.i)
+     if(ordem = #u) then
+       return true
+     i := i+1
+
+  return false
+
+
+FatMersenne(n :PI) : PI ==
+  r : PI := 1
+  parada : Float :=  (sqrt(2 ** n) - 1)/(2*n)
+  fator :PI := 1 + 2*n*r
+  while(r <= parada) repeat
+    if(ExpMod(2,n,fator) = 1) then
+      return fator
+    r := r+1
+    fator := 1 + 2*n*r
+  return 2^n - 1
+
+FatFermat(n : PI) : PI ==
+  r: PI := 1
+  parada : Float := (2^(2^(n-1)-n-1))
+  fator : PI := 1 + 2^(n+1)*r
+
+  while(r <= parada) repeat
+    if(ExpMod(2, 2^n, fator) = fator - 1) then
+       return fator
+    r := r + 1
+    fator := 1 + 2^(n+1)*r
+  return 2^(2^n) + 1
+
+TLucas(n : PI) : BOOLEAN ==
+ b: PI := 2
+ i: PI := 1
+ fat:Record(F:List(PI), M:List(PI)) := FatTrivComp(n-1)
+ while ( b < n) repeat
+  if (ExpMod(b,n-1,n) ~= 1) then
+   return false
+  else
+   while( i <= #fat.F) repeat
+     if (ExpMod(b,((n-1) quo fat.F.i),n) = 1) then
+      break
+     else
+      if(i = #fat.F) then
+       return true
+      i := i + 1
+   b := b + 1
+   i := 1
+ return false
+
+TLucasMelhor(n : PI): BOOLEAN ==
+ b: PI := 2
+ i: PI := 1
+ aux:LIST(PI):=[]
+ fat:Record(F:List(PI), M:List(PI)) := FatTrivComp(n-1)
+ aux:=concat(aux,fat.F)
+ while ( b < n) repeat
+  if (ExpMod(b,n-1,n) ~= 1) then
+   return false
+  else
+   while( i <= #aux ) repeat
+    if (ExpMod(b,((n-1) quo aux.i),n) ~= 1) then
+     aux:=delete(aux,i)
+    if(#aux=0) then
+     return true
+    i:=i+1
+   i:= 1
+   b:= b+1
+ return false
+
+Pepin(k :PI) :BOOLEAN ==
+ f : PI := 2^(2^k)+1
+ aux : PI := (f-1) quo 2
+ if(ExpMod(5,aux,f)=f-1) then
+  return true
+ else
+  return false
+
+codif(b: PI, n: PI, e: PI):PI ==
+ bloco: PI := ExpMod(b, e, n)
+ return bloco
+
+decodif(b: PI, n: PI, d: PI):PI ==
+ bloco: PI := ExpMod(b, d, n)
+ return bloco
+
+criptografiarsa(p: PI, q: PI):LIST(PI) ==
+ n: PI := p*q
+ aux:PI:= Phi(n)
+ e: PI := 3
+ d: NNI := InvMod(e,aux)
+ while(d=0) repeat
+    e:=e+1
+    d:=InvMod(e,aux)
+ return [n,e,d]
+
+decifrarRSA(n: PI, e: PI):PI ==
+ lista :Record(F:List(PI), M:List(PI)) := FatTrivComp(n)
+ p: PI := lista.F.1
+ q: PI := lista.F.2
+ phi: PI := (p-1)*(q-1)
+ d: NNI := InvMod(e,phi)
+ return d
+
+codificaElGamal(k: PI,p: PI,g: PI,h:PI, b: PI): LIST(PI) ==
+ s: PI := ExpMod(g,k,p)
+ t: PI := (ExpMod(h,k,p)*(b)) rem p
+ return [s,t]
+
+decodificaElGamal(s: PI,t: PI,a: PI, p: PI): PI ==
+ return (ExpMod(s,p-1-a,p)*(t)) rem p
+
+LogMod(g:PI,h:PI,p:PI):NNI ==
+  m:NNI:=wholePart(sqrt(p-1)::FLOAT)::NNI+1
+  gj:List(PI) := []
+  j:NNI:=0
+  i:NNI:=0
+--Baby Steps
+  while(j<m) repeat
+    gj:= concat(gj,ExpMod(g,j,p))
+    j:=j+1
+  s:PI:=ExpMod(g,m,p)
+  slinha:NNI:=InvMod(s,p)
+  y:NNI:=h
+--Giant Steps
+  while(i<m) repeat
+    j:=1
+    while(j<=m) repeat
+      if(y=(gj.j)) then
+        return (i*m+j-1)
+      j:=j+1
+    y:=y*slinha rem p
+    i:=i+1
