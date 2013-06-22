@@ -81,10 +81,31 @@ def fermat(n):
 
 def crivo(n):
     """
-
+    Calcula uma lista de primos de 2 até o número passado como parâmetro.
     """
     x = []
     y = 3
     z = 1
     auxiliar = 1
     lista_final = [2]
+
+    while y <= n:
+        x.append(y)
+        y = y + 2
+    y = x*z
+
+    while y < (int)math.sqrt(n):
+        z = auxiliar
+        while z <= len(x):
+            z = z + y
+            if z <= len(x):
+                x[z] = 0 #onde comeca o indice no axiom
+        y = y + 2
+        auxiliar += 1
+    z = 1
+
+    while z <= len(x):
+        if x[z] is not 0:
+            lista_final.append(x[z])
+        z = z + 1
+    return lista_final
