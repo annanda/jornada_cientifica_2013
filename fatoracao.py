@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import math
+from math import sqrt
 
 def mdc(a,b):
     """
@@ -17,11 +17,12 @@ def fatoracao_trivial(n):
     Calcula o menor fator de um numero composto
     """
     F = 2
-    while F <= n and n > 1:
+    while F <= (int)(sqrt(n)):
         if n % F is 0:
             return F
         else:
             F = F+1
+    return n #nesse caso ele é primo
 
 
 class RetornoTrivialCompleta(object):
@@ -70,11 +71,11 @@ def fermat(n):
         n = n/2
     if n is 1:
         return [1,1]
-    x = (int)(math.sqrt(n))
+    x = (int)(sqrt(n))
 
     while n is not ((x**2) - (y**2)):
         x = x+1
-        y = (int)(math.sqrt(x**2 - n))
+        y = (int)(sqrt(x**2 - n))
         if x is ((n+1) / 2):
             return [1,n]
     return [x+y, x-y]
@@ -95,7 +96,7 @@ def crivo(n):
 
     y2 = x[z-1]
 
-    while y2 <= (int)(math.sqrt(n)):
+    while y2 <= (int)(sqrt(n)):
         z = auxiliar
         while z < len(x):
             z = z + y2
