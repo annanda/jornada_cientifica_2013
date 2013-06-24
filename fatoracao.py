@@ -3,7 +3,10 @@ from math import sqrt
 
 def mdc(a,b):
     """
-    Para calcular o mdc entre dois números a e b
+    Para calcular o mdc entre dois números inteiros a e b
+    Exemplo:
+        mdc(3,12)
+            retorna 3
     """
     r1 = a % b
     while r1 is not 0:
@@ -14,7 +17,10 @@ def mdc(a,b):
 
 def fatoracao_trivial(n):
     """
-    Calcula o menor fator de um numero composto
+    Calcula o menor fator inteiro de um numero inteiro composto
+    Exemplo:
+        fatoracao_trivial(15)
+            retorna 3
     """
     F = 2
     while F <= (int)(sqrt(n)):
@@ -45,7 +51,14 @@ class RetornoTrivialCompleta(object):
 
 def fatoracao_trivial_completa(n):
     """
-    Para fatorar o numero pelo algoritmo de fatoracao trivial completo
+    Para fatorar o numero inteiro pelo algoritmo de fatoracao trivial completo
+    Retorna uma instância da classe RetornoTrivialCompleta.
+    Exemplo:
+        retorno_fatoracao = fatoracao_trivial_completa(10)
+            Para acessar a lista de fatores: retorno_fatoracao.list_fatores
+                [2,5]
+            Para acessar a lista de expoentes: retorno_fatoracao.list_expoentes
+                [1,1]
     """
 
     expoente = 0
@@ -64,7 +77,11 @@ def fatoracao_trivial_completa(n):
 
 def fermat(n):
     """
-    Para fatorar o numero pelo algoritmo de fermat
+    Para fatorar o numero inteiro pelo algoritmo de fermat
+    Retorna dois números
+    Exemplo:
+        fermat(15)
+            retorna [3,5]
     """
     y = 0
     while n % 2 is 0:
@@ -83,6 +100,9 @@ def fermat(n):
 def crivo(n):
     """
     Calcula uma lista de primos de 2 até o número passado como parâmetro.
+    Exemplo:
+        crivo(10)
+            retorna [2,3,5,7]
     """
     x = []
     y = 3
