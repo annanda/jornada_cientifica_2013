@@ -86,25 +86,26 @@ def crivo(n):
     x = []
     y = 3
     z = 1
-    auxiliar = 1
+    auxiliar = 0 #no axiom aqui era 1, pois o indice começava em 1
     lista_final = [2]
 
     while y <= n:
         x.append(y)
         y = y + 2
-    y = x*z
 
-    while y < (int)math.sqrt(n):
+    y2 = x[z-1]
+
+    while y2 <= (int)(math.sqrt(n)):
         z = auxiliar
-        while z <= len(x):
-            z = z + y
-            if z <= len(x):
-                x[z] = 0 #onde comeca o indice no axiom
-        y = y + 2
+        while z < len(x):
+            z = z + y2
+            if z < len(x):
+                x[z] = 0
+        y2 = y2 + 2
         auxiliar += 1
-    z = 1
+    z = 0
 
-    while z <= len(x):
+    while z < len(x):
         if x[z] is not 0:
             lista_final.append(x[z])
         z = z + 1
