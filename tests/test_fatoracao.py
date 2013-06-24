@@ -1,7 +1,8 @@
 import random
 import unittest
 
-from fatoracao import fermat, fatoracao_trivial, crivo
+from fatoracao import fermat, fatoracao_trivial, RetornoTrivialCompleta,\
+ fatoracao_trivial_completa, crivo
 
 class TestFatoracaoFunctions(unittest.TestCase):
 
@@ -18,7 +19,16 @@ class TestFatoracaoFunctions(unittest.TestCase):
     def test_fatoracao_trivial(self):
         self.assertEqual(fatoracao_trivial(15),3)
 
-        # self.assertEqual(fermat(15),[3,5])
+
+    def test_retorno_fatoracao_trivial_completa(self):
+        retorno = RetornoTrivialCompleta([3,5,7],[4,7,2])
+        self.assertEqual(retorno.list_fatores, [3,5,7])
+        self.assertEqual(retorno.list_expoentes, [4,7,2])
+
+
+    def test_fatoracao_trivial_completa(self):
+        self.assertEqual(fatoracao_trivial_completa(20).list_fatores, [2,5])
+        self.assertEqual(fatoracao_trivial_completa(20).list_expoentes, [2,1])
 
     def test_crivo(self):
         self.assertEqual(crivo(5),[2,3,5])

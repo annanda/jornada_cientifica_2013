@@ -15,6 +15,7 @@ def mdc(a,b):
         r1 = r2
     return b
 
+
 def fatoracao_trivial(n):
     """
     Calcula o menor fator inteiro de um numero inteiro composto
@@ -29,6 +30,7 @@ def fatoracao_trivial(n):
         else:
             F = F+1
     return n #nesse caso ele é primo
+
 
 
 class RetornoTrivialCompleta(object):
@@ -48,6 +50,7 @@ class RetornoTrivialCompleta(object):
         Método To String
         """
         return "Fatores: %s, Expoentes: %s" % (list_fatores,list_expoentes)
+
 
 def fatoracao_trivial_completa(n):
     """
@@ -75,6 +78,7 @@ def fatoracao_trivial_completa(n):
         expoente = 0
     return RetornoTrivialCompleta(list_fatores,list_expoentes)
 
+
 def fermat(n):
     """
     Para fatorar o numero inteiro pelo algoritmo de fermat
@@ -96,6 +100,7 @@ def fermat(n):
         if x is ((n+1) / 2):
             return [1,n]
     return [x+y, x-y]
+
 
 def crivo(n):
     """
